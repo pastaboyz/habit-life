@@ -77,7 +77,7 @@ jobs:
     steps:
       - name: Run Smoke Test
         run: bash scripts/test/smoke.sh $TARGET_URL
-        with:
+        env:
           TARGET_URL: ${{ needs.pr-preview.outputs.url }}
 
   # ---------------------------------------------------------------------------
