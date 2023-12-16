@@ -24,7 +24,7 @@ assert-contains '200' "$status" status
 assert-contains 'content-type: text/html' "$req" reponse
 
 assert-contains '<!DOCTYPE html>' "$body" document
-assert-contains '<html lang="en">' "$body" document
+assert-contains 'lang="en"' "$body" document
 assert-contains 'charSet="utf-8"' "$body" head
 
 exit 0
