@@ -2,26 +2,70 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+@layer components {
+  .primary {
+    @apply bg-blue-500;
   }
+
+  .danger {
+    @apply bg-red-500;
+  }
+
+  .success {
+    @apply bg-green-500;
+  }
+
+  .warning {
+    @apply bg-yellow-500;
+  }
+
+  .dark {
+    @apply bg-gray-800;
+  }
+
+  .light {
+    @apply bg-gray-200;
+  }
+
+  .secondary {
+    @apply bg-gray-500;
+  }
+
+  .info {
+    @apply bg-blue-300 text-white;
+  }
+
+  .text-primary {
+    @apply text-blue-500;
+  }
+
+  .text-danger {
+    @apply text-red-500;
+  }
+
+  .text-success {
+    @apply text-green-500;
+  }
+
+  .text-warning {
+    @apply text-yellow-500;
+  }
+
+  .text-dark {
+    @apply text-gray-800;
+  }
+
+  .text-light {
+    @apply text-gray-200;
+  }
+
+  .text-secondary {
+    @apply text-gray-500;
+  }
+
+  .text-info {
+    @apply text-blue-300;
+  }
+
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-}
