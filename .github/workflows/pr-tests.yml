@@ -75,7 +75,22 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Run Smoke Test
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Restore from install
+        uses: actions/cache/restore@v3
+        with:
+          fail-on-cache-miss: true
+          path: ./node_modules
+          key: pr-install-${{ github.event.pull_request.head.sha }}
+
+      - name: Run Smoke Test against local build
+        run: bash scripts/test/smoke-local.sh
+
+      - name: Run Smoke Test against PR Preview
         run: bash scripts/test/smoke.sh $TARGET_URL
         env:
           TARGET_URL: ${{ needs.pr-preview.outputs.url }}

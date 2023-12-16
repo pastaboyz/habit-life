@@ -5,18 +5,23 @@ req=`curl -sI $targetUrl`
 body=`curl -s $targetUrl`
 
 assert-contains () {
-  if [[ "$2" == *"$1"* ]]; then
+  lowercasedA=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+  lowercasedB=$(echo "$2" | tr '[:upper:]' '[:lower:]')
+  if [[ "$lowercasedB" == *"$lowercasedA"* ]]; then
     echo "  ✓ Expected ${3:-string} to contain '$1'"
     return 0
   fi
-  echo "  ✕ Expected to ${3:-string} contain '$1' but could not be found:"
-  echo;echo;
+  echo "  ✕ Expected ${3:-string} to contain '$1' but could not be found:"
+  echo;
   echo "$2"
+  echo;
   exit 1
 }
 
-assert-contains 'HTTP/2 200' "$req" request
-assert-contains 'content-type: text/html' "$req" request
+status="$(echo "$req" | grep HTTP/)"
+assert-contains '200' "$status" status
+
+assert-contains 'content-type: text/html' "$req" reponse
 
 assert-contains '<!DOCTYPE html>' "$body" document
 assert-contains '<html lang="en">' "$body" document
