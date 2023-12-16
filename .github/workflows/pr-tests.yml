@@ -1,14 +1,10 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
-name: PR Build CI
+name: PR Integration Tests
 
 on:
   pull_request:
     branches:
       - main
-
-env:
-  PR_NUMBER: ${{ github.event.number }}
-  # NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
 
 jobs:
   # ---------------------------------------------------------------------------
@@ -56,3 +52,22 @@ jobs:
 
       - name: Run linter
         run: npm run lint
+
+  # ---------------------------------------------------------------------------
+  pr-preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      url: ${{ steps.url.outputs.targetURL }} #  Accessible in other jobs via: needs.pr-preview.outputs.url
+    steps:
+      - name: Generate Preview URL
+        id: url
+        run: echo "targetURL=$(echo https://deploy-preview-${{ github.event.number }}--habit-life.netlify.app" >> "$GITHUB_OUTPUT"
+
+      # Deploy is already handled by Netlify, so we just wait for it
+      - name: Waiting for 200 from the Netlify Preview
+        uses: jakepartusch/wait-for-netlify-action@v1.4
+        id: waitFor200
+        with:
+          site_name: ${{ steps.url.outputs.targetURL }}
+          max_timeout: 15
