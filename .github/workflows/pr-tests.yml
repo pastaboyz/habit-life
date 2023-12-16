@@ -60,14 +60,14 @@ jobs:
     outputs:
       url: ${{ steps.url.outputs.targetURL }} #  Accessible in other jobs via: needs.pr-preview.outputs.url
     steps:
-      - name: Generate Preview URL
-        id: url
-        run: echo "targetURL=$(echo https://deploy-preview-${{ github.event.number }}--habit-life.netlify.app)" >> "$GITHUB_OUTPUT"
-
-      # Deploy is already handled by Netlify, so we just wait for it
+      # PR Preview Deploy is already handled by Netlify, so we just wait for it
       - name: Waiting for 200 from the Netlify Preview
         uses: jakepartusch/wait-for-netlify-action@v1.4
         id: waitFor200
         with:
-          site_name: ${{ steps.url.outputs.targetURL }}
+          site_name: deploy-preview-${{ github.event.number }}--habit-life
           max_timeout: 5000 # 5 min
+
+      - name: Generate Preview URL
+        id: url
+        run: echo "targetURL=$(echo https://deploy-preview-${{ github.event.number }}--habit-life.netlify.app)" >> "$GITHUB_OUTPUT"
