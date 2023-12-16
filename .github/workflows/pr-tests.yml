@@ -68,3 +68,14 @@ jobs:
           max_timeout: 300 # 5min
         env:
           NETLIFY_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+
+  # ---------------------------------------------------------------------------
+  # cypress-e2e:
+  #   needs: [install, pr-preview]
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 20
+  #   steps:
+  #     - name: Run Cypress
+  #       uses: cypress-io/github-action@v2
+  #       with:
+  #         config: baseUrl=${{ needs.pr-preview.outputs.url }}
