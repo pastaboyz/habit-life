@@ -1,4 +1,4 @@
-# npm run build
+npm run build
 npm run start &
 sleep 2s
 
