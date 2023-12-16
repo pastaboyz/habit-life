@@ -1,12 +1,8 @@
-import { ReactNode, MouseEvent, Fragment, useRef, useState } from 'react';
+import { ReactNode, Fragment, useRef, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import Button_TW from '../components/button_tw';
 
-interface Props {
-  open: boolean;
-  setOpen: (value: boolean) => void;
-}
 
 interface props {
   variant: string;
