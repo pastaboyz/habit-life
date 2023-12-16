@@ -1,0 +1,58 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: PR Build CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+env:
+  PR_NUMBER: ${{ github.event.number }}
+  # NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+
+jobs:
+  # ---------------------------------------------------------------------------
+  install:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install
+        run: CYPRESS_INSTALL_BINARY=0 npm install
+
+      - name: Cache Install
+        uses: actions/cache/save@v3
+        with:
+          path: ./node_modules ./.next
+          key: pr-install-${{ github.event.pull_request.head.sha }}
+
+  # ---------------------------------------------------------------------------
+  lint:
+    needs: [install]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Restore from install
+        uses: actions/cache/restore@v3
+        with:
+          fail-on-cache-miss: true
+          path: ./node_modules ./.next
+          key: pr-install-${{ github.event.pull_request.head.sha }}
+
+      - name: Run linter
+        run: npm run lint
