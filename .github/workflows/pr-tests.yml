@@ -56,7 +56,7 @@ jobs:
   # ---------------------------------------------------------------------------
   pr-preview:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 10
     outputs:
       url: ${{ steps.url.outputs.targetURL }} #  Accessible in other jobs via: needs.pr-preview.outputs.url
     steps:
@@ -70,4 +70,4 @@ jobs:
         id: waitFor200
         with:
           site_name: ${{ steps.url.outputs.targetURL }}
-          max_timeout: 15
+          max_timeout: 5000 # 5 min
