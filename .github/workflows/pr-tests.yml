@@ -1,0 +1,107 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: PR Integration Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  # ---------------------------------------------------------------------------
+  install:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install
+        run: CYPRESS_INSTALL_BINARY=0 npm install
+
+      - name: Cache Install
+        uses: actions/cache/save@v3
+        with:
+          path: ./node_modules
+          key: pr-install-${{ github.event.pull_request.head.sha }}
+
+  # ---------------------------------------------------------------------------
+  lint:
+    needs: [install]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Restore from install
+        uses: actions/cache/restore@v3
+        with:
+          fail-on-cache-miss: true
+          path: ./node_modules
+          key: pr-install-${{ github.event.pull_request.head.sha }}
+
+      - name: Run linter
+        run: npm run lint
+
+  # ---------------------------------------------------------------------------
+  pr-preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      url: ${{ steps.waitForDeployment.outputs.url }} #  Accessible in other jobs via: needs.pr-preview.outputs.url
+    steps:
+      - name: Wait for Netlify Deploy
+        uses: kamranayub/wait-for-netlify-action@v2.1.1
+        id: waitForDeployment
+        with:
+          site_name: habit-life
+          max_timeout: 300 # 5min
+        env:
+          NETLIFY_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+
+  # ---------------------------------------------------------------------------
+  smoke-test:
+    needs: [install, pr-preview]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Restore from install
+        uses: actions/cache/restore@v3
+        with:
+          fail-on-cache-miss: true
+          path: ./node_modules
+          key: pr-install-${{ github.event.pull_request.head.sha }}
+
+      - name: Run Smoke Test against local build
+        run: bash scripts/test/smoke-local.sh
+
+      - name: Run Smoke Test against PR Preview
+        run: bash scripts/test/smoke.sh $TARGET_URL
+        env:
+          TARGET_URL: ${{ needs.pr-preview.outputs.url }}
+
+  # ---------------------------------------------------------------------------
+  # cypress-e2e:
+  #   needs: [install, pr-preview]
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 20
+  #   steps:
+  #     - name: Run Cypress
+  #       uses: cypress-io/github-action@v2
+  #       with:
+  #         config: baseUrl=${{ needs.pr-preview.outputs.url }}
