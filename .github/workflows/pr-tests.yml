@@ -61,7 +61,7 @@ jobs:
       url: ${{ steps.waitForDeployment.outputs.url }} #  Accessible in other jobs via: needs.pr-preview.outputs.url
     steps:
       - name: Wait for Netlify Deploy
-        uses: probablyup/wait-for-netlify-action@3.2.0
+        uses: probablyup/wait-for-netlify-action@v3
         id: waitForDeployment
         with:
           site_id: habit-life
