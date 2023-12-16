@@ -70,6 +70,17 @@ jobs:
           NETLIFY_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
 
   # ---------------------------------------------------------------------------
+  smoke-test:
+    needs: [install, pr-preview]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Run Smoke Test
+        run: bash scripts/test/smoke.sh $TARGET_URL
+        with:
+          TARGET_URL: ${{ needs.pr-preview.outputs.url }}
+
+  # ---------------------------------------------------------------------------
   # cypress-e2e:
   #   needs: [install, pr-preview]
   #   runs-on: ubuntu-latest
