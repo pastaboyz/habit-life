@@ -64,7 +64,6 @@ jobs:
         uses: probablyup/wait-for-netlify-action@v3.4.0
         id: waitForDeployment
         with:
-          site_id: habit-life
-          context: deploy-preview
+          site_id: deploy-preview-${{ github.event.number }}--habit-life
         env:
           NETLIFY_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
