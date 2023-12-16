@@ -58,16 +58,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     outputs:
-      url: ${{ steps.url.outputs.targetURL }} #  Accessible in other jobs via: needs.pr-preview.outputs.url
+      url: ${{ steps.waitForDeployment.outputs.url }} #  Accessible in other jobs via: needs.pr-preview.outputs.url
     steps:
-      # PR Deploy Preview is already handled by Netlify, so we just wait for it
-      - name: Waiting for 200 from the Netlify Preview
-        uses: jakepartusch/wait-for-netlify-action@v1.4
-        id: waitFor200
+      - name: Wait for Netlify Deploy
+        uses: probablyup/wait-for-netlify-action@3.2.0
+        id: waitForDeployment
         with:
-          site_name: habit-life # this action tacks on "deploy-preview-${{ github.event.number }}--" to the front
-          max_timeout: 5000 # 5 min
-
-      - name: Generate Preview URL
-        id: url
-        run: echo "targetURL=$(echo https://deploy-preview-${{ github.event.number }}--habit-life.netlify.app)" >> "$GITHUB_OUTPUT"
+          site_id: habit-life
+        env:
+          NETLIFY_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
