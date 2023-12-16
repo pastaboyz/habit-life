@@ -65,6 +65,6 @@ jobs:
         id: waitForDeployment
         with:
           # site_id: deploy-preview-${{ github.event.number }}--habit-life
-          site_id: habit-life
+          site_name: habit-life
         env:
           NETLIFY_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
