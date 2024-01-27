@@ -1,10 +1,10 @@
 'use client'
 import React from 'react'
-import Button_TW from '../components/button_tw'
-import Badge_TW from '../components/badge_tw'
-import Dropdown_TW from '../components/dropdown_tw'
-import Navbar_TW from '../components/navbar_tw'
-import Modal_TW from '../components/modal_tw'
+import Button_TW from '../../components/button_tw'
+import Badge_TW from '../../components/badge_tw'
+import Dropdown_TW from '../../components/dropdown_tw'
+import Navbar_TW from '../../components/navbar_tw'
+import Modal_TW from '../../components/modal_tw'
 
 export default function Test() {
   const categories: string[] = [
